@@ -21,11 +21,16 @@ function ArticleCard({ article }) {
   const isUpdated = (article.source || '').toLowerCase().includes('updated')
   const label = isUpdated ? 'Updated' : 'Original'
   const { body, refs } = useMemo(() => extractReferencesBlock(article.content || ''), [article.content])
+  let host = ''
+  try {
+    host = new URL(article.url).hostname
+  } catch {}
   return (
     <div className="card">
       <div className="card-header">
         <span className={`badge ${isUpdated ? 'badge-updated' : 'badge-original'}`}>{label}</span>
         <h3 className="title">{article.title}</h3>
+        {host && <span className="pill">{host}</span>}
       </div>
       <div className="meta">
         {(article.author || article.source) && (
@@ -63,7 +68,7 @@ function ArticleCard({ article }) {
         )}
       </div>
       <div className="actions">
-        <a className="link" href={article.url} target="_blank" rel="noreferrer">Open Source</a>
+        <a className="link" href={article.url} target="_blank" rel="noreferrer">Open Article</a>
         <button className="btn" onClick={() => setExpanded(e => !e)}>{expanded ? 'Show Less' : 'Show More'}</button>
       </div>
     </div>
@@ -76,6 +81,7 @@ export default function App() {
   const [loading, setLoading] = useState(false)
   const [page, setPage] = useState(1)
   const perPage = 50
+  const [filter, setFilter] = useState('all')
 
   useEffect(() => {
     async function load() {
@@ -95,17 +101,35 @@ export default function App() {
 
   const items = useMemo(() => (data?.data ?? []), [data])
   const groups = useMemo(() => groupByBaseUrl(items), [items])
+  const filteredGroups = useMemo(() => {
+    return groups.map(g => ({
+      base: g.base,
+      list: g.list.filter(a => {
+        const isUpd = (a.source || '').toLowerCase().includes('updated')
+        if (filter === 'original') return !isUpd
+        if (filter === 'updated') return isUpd
+        return true
+      })
+    })).filter(g => g.list.length > 0)
+  }, [groups, filter])
 
   return (
     <div className="container">
       <header className="header">
-        <h1>BeyondChats Articles</h1>
-        <div className="sub">
-          <span>API: {API_BASE_URL}</span>
+        <div className="brand">
+          <img className="logo" src={`${API_BASE_URL}/beyond_chats_logo.jpeg`} alt="BeyondChats" />
+          <h1>BeyondChats Articles</h1>
+        </div>
+        <div className="controls">
           <div className="pager">
             <button disabled={page <= 1} onClick={() => setPage(p => Math.max(1, p - 1))}>Prev</button>
             <span>Page {page}</span>
             <button disabled={!data?.next_page_url} onClick={() => setPage(p => p + 1)}>Next</button>
+          </div>
+          <div className="filterbar">
+            <button className={`chip ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}>All</button>
+            <button className={`chip ${filter === 'original' ? 'active' : ''}`} onClick={() => setFilter('original')}>Original</button>
+            <button className={`chip ${filter === 'updated' ? 'active' : ''}`} onClick={() => setFilter('updated')}>Updated</button>
           </div>
         </div>
       </header>
@@ -118,7 +142,7 @@ export default function App() {
       {error && <div className="status error">Error: {error}</div>}
 
       <main className="groups">
-        {groups.map(g => (
+        {filteredGroups.map(g => (
           <section key={g.base} className="group">
             <h2 className="group-title">{g.list[0]?.title || g.base}</h2>
             <div className="grid">
@@ -128,7 +152,7 @@ export default function App() {
             </div>
           </section>
         ))}
-        {!loading && groups.length === 0 && (
+        {!loading && filteredGroups.length === 0 && (
           <div className="status">No articles found</div>
         )}
       </main>
