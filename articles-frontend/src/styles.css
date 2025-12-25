@@ -1,0 +1,49 @@
+:root {
+  color-scheme: light dark;
+  --bg: #0b0c10;
+  --fg: #e8edf1;
+  --muted: #a8b0b7;
+  --primary: #2f6df6;
+  --border: #23252a;
+  --card: #14171a;
+  --accent: #14b8a6;
+}
+* { box-sizing: border-box }
+body {
+  margin: 0;
+  font-family: Inter, ui-sans-serif, system-ui, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  background: var(--bg);
+  color: var(--fg);
+}
+.container { max-width: 1200px; margin: 0 auto; padding: 24px }
+.header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+.header h1 { font-size: 24px; margin: 0 }
+.sub { display: flex; align-items: center; gap: 12px; color: var(--muted) }
+.pager { display: flex; align-items: center; gap: 8px }
+.pager button { padding: 6px 10px; border: 1px solid var(--border); background: linear-gradient(180deg, #1a1c1f, #101317); color: var(--fg); border-radius: 8px; }
+.status { padding: 12px; margin: 12px 0; border: 1px solid var(--border); border-radius: 8px; background: var(--card); color: var(--muted) }
+.status.error { color: #ff9898; border-color: #b44 }
+.groups { display: flex; flex-direction: column; gap: 24px }
+.group-title { margin: 0 0 8px 0; font-size: 18px; color: var(--fg) }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px }
+@media (max-width: 800px) { .grid { grid-template-columns: 1fr } }
+.card { border: 1px solid var(--border); border-radius: 14px; background: linear-gradient(180deg, #15181b, #0f1216); padding: 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 6px 12px rgba(0,0,0,0.35); }
+.card-header { display: flex; align-items: center; gap: 8px }
+.title { margin: 0; font-size: 16px; }
+.badge { font-size: 12px; padding: 5px 10px; border-radius: 999px; }
+.badge-original { background: #1e293b; color: #93c5fd }
+.badge-updated { background: #2b1e3b; color: #fda4af }
+.meta .row { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 13px; }
+.spacer { color: var(--border) }
+.cover { width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--border) }
+.content-truncated, .content-full { white-space: pre-wrap; line-height: 1.5; color: var(--fg) }
+.excerpt { color: var(--muted) }
+.actions { display: flex; align-items: center; gap: 10px }
+.btn { padding: 10px 14px; border-radius: 10px; background: linear-gradient(180deg, var(--primary), #1f54c9); border: none; color: white; cursor: pointer }
+.link { color: #93c5fd; text-decoration: none }
+.notice { padding: 12px; border: 1px dashed var(--border); border-radius: 8px; background: #0f1216; color: var(--muted); margin-bottom: 12px }
+.refs { border-top: 1px solid var(--border); margin-top: 10px; padding-top: 10px }
+.refs-title { font-weight: 600; font-size: 14px; color: var(--muted); margin-bottom: 6px }
+.refs-list { margin: 0; padding-left: 16px }
+.refs-list li { margin-bottom: 4px }
+.refs-list a { color: var(--accent); text-decoration: none }
